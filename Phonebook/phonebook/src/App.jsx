@@ -1,7 +1,10 @@
+// App.jsx
+// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { getAll, create, update, remove } from './services/persons.js';
 import './index.css';
 
+// eslint-disable-next-line react/prop-types
 const Form = ({ newName, phoneNumber, handleName, handlePhoneNumber, onSubmit }) => {
     return (
         <form onSubmit={onSubmit}>
@@ -18,6 +21,7 @@ const Form = ({ newName, phoneNumber, handleName, handlePhoneNumber, onSubmit })
     );
 };
 
+// eslint-disable-next-line react/prop-types
 const Input = ({ type, placeholder, value, onChange }) => {
     return (
         <input
@@ -29,6 +33,7 @@ const Input = ({ type, placeholder, value, onChange }) => {
     );
 };
 
+// eslint-disable-next-line react/prop-types
 const Notification = ({ message, type }) => {
     if (message === null) {
         return null;
@@ -50,10 +55,9 @@ const App = () => {
     const [notificationType, setNotificationType] = useState('');
 
     useEffect(() => {
-        axios.get('http://localhost:3001/persons')
-            .then(response => {
-                setPersons(response.data);
-            });
+        getAll().then(response => {
+            setPersons(response.data);
+        });
     }, []);
 
     const handleName = (event) => {
@@ -79,8 +83,7 @@ const App = () => {
 
         if (existingPerson) {
             if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
-                axios
-                    .put(`http://localhost:3001/persons/${existingPerson.id}`, personObject)
+                update(existingPerson.id, personObject)
                     .then(response => {
                         setPersons(persons.map(person =>
                             person.id === existingPerson.id ? response.data : person
@@ -103,8 +106,7 @@ const App = () => {
                     });
             }
         } else {
-            axios
-                .post('http://localhost:3001/persons', personObject)
+            create(personObject)
                 .then(response => {
                     setPersons(persons.concat(response.data));
                     setNewName('');
@@ -128,7 +130,7 @@ const App = () => {
 
     const handleDelete = (id) => {
         if (window.confirm('Are you sure you want to delete this person?')) {
-            axios.delete(`http://localhost:3001/persons/${id}`)
+            remove(id)
                 .then(() => {
                     setPersons(persons.filter(person => person.id !== id));
                     setNotificationMessage('Person deleted');

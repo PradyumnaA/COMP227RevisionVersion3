@@ -10,7 +10,10 @@
   "author": "Prada",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.19.2",
+    "fly": "^4.6.3",
+    "morgan": "^1.10.0",
     "nodemon": "^3.1.4"
   }
 }
